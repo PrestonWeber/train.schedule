@@ -22,9 +22,32 @@ $("#submit").on("click", function (event) {
     console.log(destination);
     var startTime = moment($("#start-input").val().trim(), "HH:mm").subtract(1, "years");
     console.log(startTime);
-    
     var frequency = $("#frequency-input").val();
     console.log(frequency);
+
+    var trainInfo = {
+        name: trainName,
+        destination: destination,
+        start: startTime,
+        frequency: frequency
+    };
+
+    database.ref().push(trainInfo);
+
+    console.log(trainInfo.name);
+    console.log(trainInfo.destination)
+    console.log(trainInfo.start);
+    console.log(frequency.frequency);
+});
+
+database.ref().on("child_added", function (childSnapshot) {
+    console.log(childSnapshot.val());
+
+    var trainName = childSnapshot.val().name;
+    var destination = childSnapshot.val().destination;
+    var startTime = childSnapshot.val().start;
+    var frequency = childSnapshot.val().frequency;
+
 
     var currentTime = moment();
     console.log(currentTime);
@@ -36,6 +59,19 @@ $("#submit").on("click", function (event) {
     console.log("minutes away: " + minutesAway);
     var nextTrain = moment().add(minutesAway, "minutes");
     console.log("arrival time: " + moment(nextTrain).format("hh:mm"));
+
+    var newRow = $("<tr>").append(
+        $("<td>").text(trainName),
+        $("<td>").text(destination),
+        $("<td>").text(frequency),
+        $("<td>").text(moment(nextTrain).format("hh:mm")),
+        $("<td>").text(minutesAway)
+    );
+
+
+    $("#trainSchedule > tbody").append(newRow);
+
+
 
 
 
